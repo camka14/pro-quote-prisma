@@ -6,12 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "./generated/prisma"
-}
-
-generator client_next {
-  provider = "prisma-client"
-  output   = "../pro-quote-next/generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
