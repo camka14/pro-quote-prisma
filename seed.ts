@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "./generated/prisma/client.js";
+import { PrismaClient } from "../generated/prisma/client.js";
 import { config as loadEnv } from "dotenv";
 import { randomBytes, scrypt as _scrypt } from "crypto";
 import { promisify } from "util";
