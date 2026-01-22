@@ -32,6 +32,7 @@ model User {
   memberships            Membership[]
   ownedCompanies         Company[]      @relation("OwnedCompanies")
   customers              Customer[]
+  vendors                Vendor[]
   projects               Project[]
   quotes                 Quote[]
   invoices               Invoice[]
@@ -61,8 +62,9 @@ model Company {
   updatedAt         DateTime           @updatedAt
   defaultForUsers   User[]             @relation("DefaultCompany")
   memberships       Membership[]
-  teams             CompanyTeam[]
+  roles             Role[]
   customers         Customer[]
+  vendors           Vendor[]
   projects          Project[]
   projectNotes      ProjectNote[]
   quotes            Quote[]
@@ -82,14 +84,14 @@ model Membership {
   id        String         @id @default(cuid())
   userId    String?
   companyId String
-  teamId    String?
+  roleId    String?
   email     String?
   status    MembershipStatus @default(accepted)
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   user      User?          @relation(fields: [userId], references: [id])
   company   Company        @relation(fields: [companyId], references: [id])
-  team      CompanyTeam?   @relation(fields: [teamId], references: [id])
+  role      Role?          @relation(fields: [roleId], references: [id])
 
   @@unique([userId, companyId])
   @@unique([companyId, email])
@@ -101,7 +103,7 @@ enum MembershipStatus {
   rejected
 }
 
-model CompanyTeam {
+model Role {
   id          String        @id @default(cuid())
   companyId   String
   name        String
@@ -109,7 +111,9 @@ model CompanyTeam {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   company     Company       @relation(fields: [companyId], references: [id])
-  members     Membership[]
+  memberships Membership[]
+  customers   Customer[]
+  vendors     Vendor[]
 
   @@index([companyId])
 }
@@ -134,6 +138,7 @@ model Customer {
   id        String    @id @default(cuid())
   userId    String
   companyId String
+  roleId    String?
   name      String
   email     String?
   address   String?
@@ -148,7 +153,28 @@ model Customer {
   updatedAt DateTime  @updatedAt
   user      User      @relation(fields: [userId], references: [id])
   company   Company   @relation(fields: [companyId], references: [id])
+  role      Role?     @relation(fields: [roleId], references: [id])
   projects  Project[]
+  sharedLinks SharedLink[]
+
+  @@index([roleId], map: "Customer_roleId_idx")
+}
+
+model Vendor {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  roleId    String?
+  name      String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  company   Company  @relation(fields: [companyId], references: [id])
+  role      Role?    @relation(fields: [roleId], references: [id])
+
+  @@index([companyId])
+  @@index([roleId])
 }
 
 model Project {
@@ -384,17 +410,19 @@ model SharedLink {
   userId           String
   companyId        String
   projectId        String?
+  customerId       String?
   estimateIds      String[]
   divisionIds      String[]
   lineItemIds      String[]
-  recipientEmails  String[]
-  emailPermissions String?
   sharedData       Json?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   user             User     @relation(fields: [userId], references: [id])
   company          Company  @relation(fields: [companyId], references: [id])
   project          Project? @relation(fields: [projectId], references: [id])
+  customer         Customer? @relation(fields: [customerId], references: [id])
+
+  @@index([customerId], map: "SharedLink_customerId_idx")
 }
 
 model File {

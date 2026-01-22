@@ -14,12 +14,22 @@ const scrypt = promisify(_scrypt);
 const ADMIN_TEAM_NAME = process.env.ADMIN_TEAM_NAME || "Admin";
 const SYSTEM_USER_EMAIL = "system@local";
 
-const FULL_TEAM_PERMISSIONS = {
+const FULL_ROLE_PERMISSIONS = {
   company: "edit",
   customers: "edit",
   projects: "edit",
   estimates: "edit",
   quotes: "edit",
+};
+
+const DEFAULT_CUSTOMER_ROLE_NAME = "Customer";
+const DEFAULT_CUSTOMER_ROLE_PERMISSIONS = {
+  company: "none",
+  customers: "none",
+  projects: "none",
+  estimates: "none",
+  quotes: "none",
+  customerPortal: { canViewPrices: false },
 };
 
 const isTruthy = (value?: string): boolean => {
@@ -120,7 +130,7 @@ const hashPassword = async (plain: string): Promise<string> => {
   return `${salt.toString("hex")}:${derived.toString("hex")}`;
 };
 
-const buildAdminTeamName = (companyName: string): string => {
+const buildAdminRoleName = (companyName: string): string => {
   const base = companyName
     .trim()
     .toLowerCase()
@@ -131,18 +141,33 @@ const buildAdminTeamName = (companyName: string): string => {
   return `${base}-admin`;
 };
 
-const ensureCompanyAdminTeam = async (companyId: string, companyName: string): Promise<void> => {
-  const adminTeamName = buildAdminTeamName(companyName);
-  const existing = await prisma.companyTeam.findFirst({
-    where: { companyId, name: adminTeamName },
+const ensureCompanyAdminRole = async (companyId: string, companyName: string): Promise<void> => {
+  const adminRoleName = buildAdminRoleName(companyName);
+  const existing = await prisma.role.findFirst({
+    where: { companyId, name: adminRoleName },
     select: { id: true },
   });
   if (existing) return;
-  await prisma.companyTeam.create({
+  await prisma.role.create({
     data: {
       companyId,
-      name: adminTeamName,
-      permissions: FULL_TEAM_PERMISSIONS,
+      name: adminRoleName,
+      permissions: FULL_ROLE_PERMISSIONS,
+    },
+  });
+};
+
+const ensureDefaultCustomerRole = async (companyId: string): Promise<void> => {
+  const existing = await prisma.role.findFirst({
+    where: { companyId, name: DEFAULT_CUSTOMER_ROLE_NAME },
+    select: { id: true },
+  });
+  if (existing) return;
+  await prisma.role.create({
+    data: {
+      companyId,
+      name: DEFAULT_CUSTOMER_ROLE_NAME,
+      permissions: DEFAULT_CUSTOMER_ROLE_PERMISSIONS,
     },
   });
 };
@@ -172,7 +197,8 @@ const ensureAdminCompany = async (): Promise<string> => {
     select: { id: true, name: true },
   });
   if (existing) {
-    await ensureCompanyAdminTeam(existing.id, existing.name);
+    await ensureCompanyAdminRole(existing.id, existing.name);
+    await ensureDefaultCustomerRole(existing.id);
     return existing.id;
   }
 
@@ -185,7 +211,8 @@ const ensureAdminCompany = async (): Promise<string> => {
     },
     select: { id: true },
   });
-  await ensureCompanyAdminTeam(company.id, ADMIN_TEAM_NAME);
+  await ensureCompanyAdminRole(company.id, ADMIN_TEAM_NAME);
+  await ensureDefaultCustomerRole(company.id);
   return company.id;
 };
 
@@ -218,22 +245,22 @@ const seedAdminUser = async (adminCompanyId: string) => {
     where: { id: adminCompanyId },
     select: { id: true, name: true },
   });
-  const adminTeamName = adminCompany ? buildAdminTeamName(adminCompany.name) : null;
-  const adminTeam = adminTeamName
-    ? await prisma.companyTeam.findFirst({
-        where: { companyId: adminCompanyId, name: adminTeamName },
+  const adminRoleName = adminCompany ? buildAdminRoleName(adminCompany.name) : null;
+  const adminRole = adminRoleName
+    ? await prisma.role.findFirst({
+        where: { companyId: adminCompanyId, name: adminRoleName },
         select: { id: true },
       })
     : null;
-  const resolvedAdminTeamId = adminTeam?.id
-    ? adminTeam.id
+  const resolvedAdminRoleId = adminRole?.id
+    ? adminRole.id
     : adminCompany
       ? (
-          await prisma.companyTeam.create({
+          await prisma.role.create({
             data: {
               companyId: adminCompanyId,
-              name: adminTeamName ?? "admin",
-              permissions: FULL_TEAM_PERMISSIONS,
+              name: adminRoleName ?? "admin",
+              permissions: FULL_ROLE_PERMISSIONS,
             },
             select: { id: true },
           })
@@ -247,11 +274,11 @@ const seedAdminUser = async (adminCompanyId: string) => {
         companyId: adminCompanyId,
       },
     },
-    update: { teamId: resolvedAdminTeamId, email: user.email.toLowerCase(), status: "accepted" },
+    update: { roleId: resolvedAdminRoleId, email: user.email.toLowerCase(), status: "accepted" },
     create: {
       userId: user.id,
       companyId: adminCompanyId,
-      teamId: resolvedAdminTeamId,
+      roleId: resolvedAdminRoleId,
       email: user.email.toLowerCase(),
       status: "accepted",
     },
