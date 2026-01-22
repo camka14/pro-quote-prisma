@@ -424,6 +424,8 @@ model WebExtensionExport {
   pagesSeen  Int
   groupCount Int
   recordCount Int
+  schemaVersion Int @default(1)
+  pageType    String?
   capture    Json
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
