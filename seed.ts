@@ -18,7 +18,7 @@ const FULL_ROLE_PERMISSIONS = {
   company: "edit",
   customers: "edit",
   projects: "edit",
-  estimates: "edit",
+  budgets: "edit",
   quotes: "edit",
 };
 
@@ -27,7 +27,7 @@ const DEFAULT_CUSTOMER_ROLE_PERMISSIONS = {
   company: "none",
   customers: "none",
   projects: "none",
-  estimates: "none",
+  budgets: "none",
   quotes: "none",
   customerPortal: { canViewPrices: false },
 };
