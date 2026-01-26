@@ -182,6 +182,7 @@ model Project {
   userId         String
   companyId      String
   customerId     String
+  name           String?
   projectType    String
   description    String?
   street1        String?
