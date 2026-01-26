@@ -343,7 +343,6 @@ model AiJob {
 
 model Budget {
   id                 String             @id @default(cuid())
-  budgetName       String
   userId             String
   companyId          String
   projectId          String?
