@@ -185,12 +185,12 @@ model Project {
   name           String?
   projectType    String
   description    String?
-  street1        String?
+  street1        String
   street2        String?
-  city           String?
-  state          String?
-  zipCode        String?
-  country        String?
+  city           String
+  state          String
+  zipCode        String
+  country        String
   status         String?      @default("LEAD")
   notes          String[]
   referenceFiles String[]
