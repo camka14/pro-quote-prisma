@@ -1,2 +1,1 @@
--- Remove budgetName now that budgets are tied to projects
-ALTER TABLE "Budget" DROP COLUMN "budgetName";
+-- No-op: column removal moved to a later migration after rename.
