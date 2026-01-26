@@ -363,8 +363,6 @@ model BudgetDivision {
   companyId    String
   divisionName String
   followUps    Json?
-  laborHours   Float                      @default(0)
-  laborRate    Float                      @default(0)
   createdAt    DateTime                   @default(now())
   updatedAt    DateTime                   @updatedAt
   budget     Budget?                  @relation(fields: [budgetId], references: [id])
