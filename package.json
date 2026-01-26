@@ -5,6 +5,7 @@
   "scripts": {
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "migrate:deploy:remote": "DOTENV_CONFIG_PATH=.env.remote prisma migrate deploy",
     "generate": "prisma generate",
     "lint": "tsc --noEmit --project tsconfig.json",
     "studio": "prisma studio",
