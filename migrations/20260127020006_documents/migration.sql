@@ -5,4 +5,9 @@
 
 */
 -- CreateIndex
-CREATE UNIQUE INDEX "Document_currentVersionId_key" ON "Document"("currentVersionId");
+DO $$
+BEGIN
+  IF to_regclass('public."Document"') IS NOT NULL THEN
+    CREATE UNIQUE INDEX IF NOT EXISTS "Document_currentVersionId_key" ON "Document"("currentVersionId");
+  END IF;
+END $$;
