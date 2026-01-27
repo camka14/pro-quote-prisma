@@ -4,6 +4,7 @@ import { config as loadEnv } from "dotenv";
 import { randomBytes, scrypt as _scrypt } from "crypto";
 import { promisify } from "util";
 import { Pool, type PoolConfig } from "pg";
+import { seedDefaultDocumentTemplates } from "../lib/documentTemplates.js";
 
 // Prefer local env settings when present; fall back to .env defaults.
 loadEnv({ path: ".env.local", override: true });
@@ -299,6 +300,12 @@ async function main() {
   console.log(`Ensured admin company exists: ${adminCompanyId}`);
 
   await seedAdminUser(adminCompanyId);
+
+  const systemUserId = await ensureSystemUser();
+  const templateSeed = await seedDefaultDocumentTemplates(prisma, adminCompanyId, systemUserId);
+  if (templateSeed.created > 0) {
+    console.log(`Seeded ${templateSeed.created} default document templates.`);
+  }
 }
 
 main()

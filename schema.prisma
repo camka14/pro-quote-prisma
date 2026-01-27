@@ -49,6 +49,8 @@ model User {
   documentsCreated         Document[]
   documentVersionsCreated  DocumentVersion[]
   documentEvents           DocumentEvent[]
+  documentSigningRequests  DocumentSigningRequest[]
+  documentSigners          DocumentSigner[]
 }
 
 model Company {
@@ -472,6 +474,8 @@ model DocumentTemplate {
   name      String
   status    String       @default("ACTIVE")
   isDefault Boolean      @default(false)
+  boldsignTemplateId String?
+  signerRoles Json?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   company   Company      @relation(fields: [companyId], references: [id])
@@ -519,6 +523,8 @@ model Document {
   versions         DocumentVersion[] @relation("DocumentVersions")
   attachments      DocumentAttachment[]
   events           DocumentEvent[]
+  signingRequests  DocumentSigningRequest[]
+  signers          DocumentSigner[]
 
   @@index([companyId, projectId])
   @@index([status])
@@ -575,6 +581,49 @@ model DocumentEvent {
 
   @@index([documentId])
   @@index([actorUserId])
+}
+
+model DocumentSigningRequest {
+  id                String   @id @default(cuid())
+  documentId        String
+  templateId        String?
+  boldsignTemplateId String?
+  boldsignDocumentId String
+  status            String   @default("pending")
+  createdById       String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  document          Document @relation(fields: [documentId], references: [id])
+  createdBy         User     @relation(fields: [createdById], references: [id])
+  signers           DocumentSigner[]
+
+  @@index([documentId])
+  @@index([boldsignDocumentId])
+  @@index([createdById])
+}
+
+model DocumentSigner {
+  id                String   @id @default(cuid())
+  signingRequestId  String
+  documentId        String
+  roleName          String?
+  roleIndex         Int?
+  signerName        String
+  signerEmail       String
+  signerUserId      String?
+  signingOrder      Int?
+  status            String   @default("pending")
+  signedAt          DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  signingRequest    DocumentSigningRequest @relation(fields: [signingRequestId], references: [id])
+  document          Document @relation(fields: [documentId], references: [id])
+  signerUser        User?    @relation(fields: [signerUserId], references: [id])
+
+  @@index([signingRequestId])
+  @@index([documentId])
+  @@index([signerUserId])
+  @@index([signerEmail])
 }
 
 model WebExtensionExport {
