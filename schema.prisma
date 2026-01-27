@@ -45,6 +45,10 @@ model User {
   budgets              Budget[]
   files                  File[]
   webExtensionExports    WebExtensionExport[]
+  documentTemplateVersions DocumentTemplateVersion[]
+  documentsCreated         Document[]
+  documentVersionsCreated  DocumentVersion[]
+  documentEvents           DocumentEvent[]
 }
 
 model Company {
@@ -78,6 +82,8 @@ model Company {
   budgetLineItems BudgetLineItem[]
   sharedLinks       SharedLink[]
   files             File[]
+  documentTemplates DocumentTemplate[]
+  documents         Document[]
 }
 
 model Membership {
@@ -101,6 +107,24 @@ enum MembershipStatus {
   pending
   accepted
   rejected
+}
+
+enum DocumentType {
+  CONTRACT
+  CHANGE_ORDER
+  PURCHASE_ORDER
+  WORK_ORDER
+  WARRANTY
+  QUOTE
+}
+
+enum DocumentStatus {
+  DRAFT
+  SENT
+  APPROVED
+  REJECTED
+  SIGNED
+  VOIDED
 }
 
 model Role {
@@ -204,6 +228,7 @@ model Project {
   quotes         Quote[]
   sharedLinks    SharedLink[]
   budgets      Budget[]
+  documents     Document[]
 }
 
 model ProjectNote {
@@ -436,6 +461,120 @@ model File {
   updatedAt    DateTime @updatedAt
   company      Company? @relation(fields: [companyId], references: [id])
   uploader     User?    @relation(fields: [uploaderId], references: [id])
+  documentVersionPdfs DocumentVersion[] @relation("DocumentVersionPdfFile")
+  documentAttachments DocumentAttachment[]
+}
+
+model DocumentTemplate {
+  id        String       @id @default(cuid())
+  companyId String
+  type      DocumentType
+  name      String
+  status    String       @default("ACTIVE")
+  isDefault Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  company   Company      @relation(fields: [companyId], references: [id])
+  versions  DocumentTemplateVersion[]
+
+  @@index([companyId])
+  @@index([type])
+}
+
+model DocumentTemplateVersion {
+  id            String   @id @default(cuid())
+  templateId    String
+  versionNumber Int
+  bodyHtml      String
+  schemaJson    Json?
+  createdById   String
+  createdAt     DateTime @default(now())
+  template      DocumentTemplate @relation(fields: [templateId], references: [id])
+  createdBy     User     @relation(fields: [createdById], references: [id])
+  documentVersions DocumentVersion[]
+
+  @@unique([templateId, versionNumber])
+  @@index([templateId])
+  @@index([createdById])
+}
+
+model Document {
+  id               String         @id @default(cuid())
+  companyId         String
+  projectId         String
+  type             DocumentType
+  number           String?
+  status           DocumentStatus @default(DRAFT)
+  currentVersionId String?        @unique
+  counterpartyType String?
+  counterpartyId   String?
+  totalAmount      Decimal?       @db.Decimal(18, 2)
+  createdById      String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  company          Company        @relation(fields: [companyId], references: [id])
+  project          Project        @relation(fields: [projectId], references: [id])
+  createdBy        User           @relation(fields: [createdById], references: [id])
+  currentVersion   DocumentVersion? @relation("DocumentCurrentVersion", fields: [currentVersionId], references: [id])
+  versions         DocumentVersion[] @relation("DocumentVersions")
+  attachments      DocumentAttachment[]
+  events           DocumentEvent[]
+
+  @@index([companyId, projectId])
+  @@index([status])
+}
+
+model DocumentVersion {
+  id                String   @id @default(cuid())
+  documentId        String
+  versionNumber     Int
+  templateVersionId String?
+  renderedHtml      String
+  dataSnapshotJson  Json?
+  pdfFileId         String?
+  createdById       String
+  createdAt         DateTime @default(now())
+  document          Document @relation("DocumentVersions", fields: [documentId], references: [id])
+  currentFor       Document? @relation("DocumentCurrentVersion")
+  templateVersion   DocumentTemplateVersion? @relation(fields: [templateVersionId], references: [id])
+  pdfFile           File?    @relation("DocumentVersionPdfFile", fields: [pdfFileId], references: [id])
+  createdBy         User     @relation(fields: [createdById], references: [id])
+  attachments       DocumentAttachment[]
+
+  @@unique([documentId, versionNumber])
+  @@index([documentId])
+  @@index([templateVersionId])
+  @@index([pdfFileId])
+}
+
+model DocumentAttachment {
+  id               String   @id @default(cuid())
+  documentId       String
+  documentVersionId String?
+  fileId           String
+  label            String?
+  createdAt        DateTime @default(now())
+  document         Document @relation(fields: [documentId], references: [id])
+  documentVersion  DocumentVersion? @relation(fields: [documentVersionId], references: [id])
+  file             File     @relation(fields: [fileId], references: [id])
+
+  @@index([documentId])
+  @@index([documentVersionId])
+  @@index([fileId])
+}
+
+model DocumentEvent {
+  id          String   @id @default(cuid())
+  documentId  String
+  eventType   String
+  actorUserId String?
+  metadataJson Json?
+  createdAt   DateTime @default(now())
+  document    Document @relation(fields: [documentId], references: [id])
+  actorUser   User?    @relation(fields: [actorUserId], references: [id])
+
+  @@index([documentId])
+  @@index([actorUserId])
 }
 
 model WebExtensionExport {
