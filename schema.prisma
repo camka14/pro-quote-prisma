@@ -509,6 +509,10 @@ model Document {
   type             DocumentType
   number           String?
   status           DocumentStatus @default(DRAFT)
+  signingRequired  Boolean        @default(false)
+  boldsignTemplateId String?
+  signerRoles      Json?
+  signingFields    Json?
   currentVersionId String?        @unique
   counterpartyType String?
   counterpartyId   String?
@@ -525,6 +529,7 @@ model Document {
   events           DocumentEvent[]
   signingRequests  DocumentSigningRequest[]
   signers          DocumentSigner[]
+  shareLinks       DocumentShareLink[]
 
   @@index([companyId, projectId])
   @@index([status])
@@ -624,6 +629,23 @@ model DocumentSigner {
   @@index([documentId])
   @@index([signerUserId])
   @@index([signerEmail])
+}
+
+model DocumentShareLink {
+  id          String   @id @default(cuid())
+  documentId  String
+  companyId   String
+  createdById String
+  recipients  Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  document    Document @relation(fields: [documentId], references: [id])
+  company     Company  @relation(fields: [companyId], references: [id])
+  createdBy   User     @relation(fields: [createdById], references: [id])
+
+  @@index([documentId])
+  @@index([companyId])
+  @@index([createdById])
 }
 
 model WebExtensionExport {
