@@ -51,6 +51,7 @@ model User {
   documentEvents           DocumentEvent[]
   documentSigningRequests  DocumentSigningRequest[]
   documentSigners          DocumentSigner[]
+  documentShareLinks       DocumentShareLink[]
 }
 
 model Company {
@@ -86,6 +87,7 @@ model Company {
   files             File[]
   documentTemplates DocumentTemplate[]
   documents         Document[]
+  documentShareLinks DocumentShareLink[]
 }
 
 model Membership {
