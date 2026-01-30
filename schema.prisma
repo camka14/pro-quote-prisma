@@ -119,6 +119,7 @@ enum DocumentType {
   PURCHASE_ORDER
   WORK_ORDER
   WARRANTY
+  WARRANTY_CLAIM
   QUOTE
 }
 
