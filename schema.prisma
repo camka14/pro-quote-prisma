@@ -43,6 +43,7 @@ model User {
   sharedLinks            SharedLink[]
   stripeIds              StripeId[]
   budgets              Budget[]
+  budgetVersions       BudgetVersion[]
   files                  File[]
   webExtensionExports    WebExtensionExport[]
   documentTemplateVersions DocumentTemplateVersion[]
@@ -388,6 +389,23 @@ model Budget {
   project            Project?           @relation(fields: [projectId], references: [id])
   divisions          BudgetDivision[]
   quotes             Quote[]
+  versions           BudgetVersion[]
+}
+
+model BudgetVersion {
+  id            String   @id @default(cuid())
+  budgetId      String
+  versionNumber Int
+  createdById   String
+  totalAmount   Decimal  @db.Decimal(18, 2)
+  breakdownJson Json
+  createdAt     DateTime @default(now())
+  budget        Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  createdBy     User     @relation(fields: [createdById], references: [id])
+
+  @@unique([budgetId, versionNumber])
+  @@index([budgetId])
+  @@index([createdById])
 }
 
 model BudgetDivision {
