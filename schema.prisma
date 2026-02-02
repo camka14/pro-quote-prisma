@@ -52,6 +52,7 @@ model User {
   documentSigningRequests  DocumentSigningRequest[]
   documentSigners          DocumentSigner[]
   documentShareLinks       DocumentShareLink[]
+  projectShareInvites      ProjectShareInvite[]
 }
 
 model Company {
@@ -88,6 +89,7 @@ model Company {
   documentTemplates DocumentTemplate[]
   documents         Document[]
   documentShareLinks DocumentShareLink[]
+  projectShareInvites ProjectShareInvite[]
 }
 
 model Membership {
@@ -232,6 +234,7 @@ model Project {
   customer       Customer     @relation(fields: [customerId], references: [id])
   quotes         Quote[]
   sharedLinks    SharedLink[]
+  shareInvites   ProjectShareInvite[]
   budgets      Budget[]
   documents     Document[]
 }
@@ -451,6 +454,38 @@ model SharedLink {
   customer         Customer? @relation(fields: [customerId], references: [id])
 
   @@index([customerId], map: "SharedLink_customerId_idx")
+}
+
+model ProjectShareInvite {
+  id                       String   @id @default(cuid())
+  projectId                String
+  companyId                String
+  createdById              String
+  recipientType            String
+  recipientId              String?
+  recipientName            String?
+  recipientEmail           String
+  enabled                  Boolean  @default(true)
+  canViewBudget            Boolean  @default(false)
+  limitToLineItems         Boolean  @default(true)
+  canViewTotals            Boolean  @default(false)
+  canViewQuantities        Boolean  @default(false)
+  budgetIds                String[]
+  divisionIds              String[]
+  lineItemIds              String[]
+  verificationCodeHash     String?
+  verificationCodeExpiresAt DateTime?
+  verificationSentAt       DateTime?
+  verifiedAt               DateTime?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  project                  Project  @relation(fields: [projectId], references: [id])
+  company                  Company  @relation(fields: [companyId], references: [id])
+  createdBy                User     @relation(fields: [createdById], references: [id])
+
+  @@index([projectId])
+  @@index([companyId])
+  @@index([recipientEmail])
 }
 
 model File {
