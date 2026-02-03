@@ -21,7 +21,7 @@ CREATE INDEX "BudgetVersion_createdById_idx" ON "BudgetVersion"("createdById");
 CREATE UNIQUE INDEX "BudgetVersion_budgetId_versionNumber_key" ON "BudgetVersion"("budgetId", "versionNumber");
 
 -- AddForeignKey
-ALTER TABLE "BudgetVersion" ADD CONSTRAINT "BudgetVersion_budgetId_fkey" FOREIGN KEY ("budgetId") REFERENCES "Budget"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "BudgetVersion" ADD CONSTRAINT "BudgetVersion_budgetId_fkey" FOREIGN KEY ("budgetId") REFERENCES "Estimate"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BudgetVersion" ADD CONSTRAINT "BudgetVersion_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
