@@ -26,6 +26,13 @@ model User {
   freeVisualizationsUsed Int            @default(0)
   subscriptionStatus     String         @default("inactive")
   subscriptionId         String?
+  onboardingTourStatus   OnboardingTourStatus? @default(not_started)
+  onboardingTourStep     Int?
+  onboardingTourStartedAt DateTime?
+  onboardingTourCompletedAt DateTime?
+  onboardingTrialPromptedAt DateTime?
+  onboardingTrialDeclinedAt DateTime?
+  onboardingDemoAccessUntil DateTime?
   lastLogin              DateTime?
   emailVerifiedAt        DateTime?
   emailVerificationCodeHash String?
@@ -118,6 +125,13 @@ enum MembershipStatus {
   pending
   accepted
   rejected
+}
+
+enum OnboardingTourStatus {
+  not_started
+  in_progress
+  completed
+  skipped
 }
 
 enum DocumentType {
