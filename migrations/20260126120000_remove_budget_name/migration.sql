@@ -1,1 +1,0 @@
--- No-op: column removal moved to a later migration after rename.

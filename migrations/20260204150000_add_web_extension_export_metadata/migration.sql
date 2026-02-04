@@ -1,3 +1,0 @@
-ALTER TABLE "WebExtensionExport"
-ADD COLUMN "schemaVersion" INTEGER NOT NULL DEFAULT 1,
-ADD COLUMN "pageType" TEXT;

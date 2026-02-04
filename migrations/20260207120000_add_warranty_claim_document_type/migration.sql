@@ -1,2 +1,0 @@
--- AlterEnum
-ALTER TYPE "DocumentType" ADD VALUE 'WARRANTY_CLAIM';
