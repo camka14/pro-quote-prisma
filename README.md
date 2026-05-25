@@ -1,6 +1,7 @@
-# Pro Quote Prisma Schema
+# Database Schema
 
-This folder contains the shared Prisma schema and migrations for Pro Quote.
+This folder contains the shared Prisma schema and migrations for the destination
+database.
 
 ## Contents
 

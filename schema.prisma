@@ -722,6 +722,37 @@ model DocumentShareLink {
   @@index([createdById])
 }
 
+model ClientApiConfig {
+  id              String           @id @default(cuid())
+  domain          String           @unique
+  apiUrl          String
+  apiKey          String?
+  apiSchema       Json?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  transferScripts TransferScript[]
+
+  @@index([domain])
+}
+
+model TransferScript {
+  id                String           @id @default(cuid())
+  clientApiConfigId String?
+  clientDomain      String
+  sourceDomain      String
+  cacheKey          String
+  code              String
+  source            String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  clientApiConfig   ClientApiConfig? @relation(fields: [clientApiConfigId], references: [id])
+
+  @@unique([clientDomain, sourceDomain, cacheKey])
+  @@index([clientApiConfigId])
+  @@index([clientDomain])
+  @@index([sourceDomain])
+}
+
 model WebExtensionExport {
   id         String   @id @default(cuid())
   userId     String?
