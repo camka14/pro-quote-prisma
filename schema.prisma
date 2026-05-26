@@ -737,23 +737,51 @@ model ClientApiConfig {
   id              String           @id @default(cuid())
   ownerAccountId  String?
   domain          String           @unique
+  domainUuid      String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   apiUrl          String?
   apiKey          String?
   apiSchema       Json?
+  webhookSecret   String?
+  webhookSecretHash String?
+  webhookSecretLast6 String?
+  webhookSecretCreatedAt DateTime?
   verificationEmail String?
   verificationTokenHash String?
   verificationTokenExpiresAt DateTime?
   verificationSentAt DateTime?
   verifiedAt      DateTime?
+  pendingDomain   String?          @unique
+  pendingVerificationEmail String?
+  pendingVerificationTokenHash String?
+  pendingVerificationTokenExpiresAt DateTime?
+  pendingVerificationSentAt DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   ownerAccount    ImporterAccount? @relation(fields: [ownerAccountId], references: [id])
   allowedEmails   ClientAllowedEmail[]
   apiKeys         ClientApiKey[]
+  webhookSecrets  ClientWebhookSecret[]
   transferScripts TransferScript[]
 
   @@index([ownerAccountId])
   @@index([domain])
+}
+
+model ClientWebhookSecret {
+  id                String          @id @default(cuid())
+  clientApiConfigId String
+  clientDomain      String
+  secret            String
+  secretHash        String          @unique
+  secretLast6       String
+  deletedAt         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  clientApiConfig   ClientApiConfig @relation(fields: [clientApiConfigId], references: [id], onDelete: Cascade)
+
+  @@index([clientApiConfigId])
+  @@index([clientDomain])
+  @@index([deletedAt])
 }
 
 model ClientApiKey {
@@ -762,6 +790,7 @@ model ClientApiKey {
   clientDomain      String
   name              String
   keyPrefix         String
+  keyLast6          String?
   keyHash           String          @unique
   scopes            Json
   lastUsedAt        DateTime?
