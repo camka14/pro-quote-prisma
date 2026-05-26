@@ -67,6 +67,17 @@ model User {
   projectShareInvites      ProjectShareInvite[]
 }
 
+model ImporterAccount {
+  id               String            @id @default(cuid())
+  email            String            @unique
+  passwordHash     String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  clientApiConfigs ClientApiConfig[]
+
+  @@index([email])
+}
+
 model Company {
   id                String             @id @default(cuid())
   name              String
@@ -724,16 +735,44 @@ model DocumentShareLink {
 
 model ClientApiConfig {
   id              String           @id @default(cuid())
+  ownerAccountId  String?
   domain          String           @unique
   apiUrl          String
   apiKey          String?
   apiSchema       Json?
+  verificationEmail String?
+  verificationTokenHash String?
+  verificationTokenExpiresAt DateTime?
+  verificationSentAt DateTime?
+  verifiedAt      DateTime?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  ownerAccount    ImporterAccount? @relation(fields: [ownerAccountId], references: [id])
   allowedEmails   ClientAllowedEmail[]
+  apiKeys         ClientApiKey[]
   transferScripts TransferScript[]
 
+  @@index([ownerAccountId])
   @@index([domain])
+}
+
+model ClientApiKey {
+  id                String          @id @default(cuid())
+  clientApiConfigId String
+  clientDomain      String
+  name              String
+  keyPrefix         String
+  keyHash           String          @unique
+  scopes            Json
+  lastUsedAt        DateTime?
+  revokedAt         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  clientApiConfig   ClientApiConfig @relation(fields: [clientApiConfigId], references: [id], onDelete: Cascade)
+
+  @@index([clientApiConfigId])
+  @@index([clientDomain])
+  @@index([keyPrefix])
 }
 
 model ClientAllowedEmail {
