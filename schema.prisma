@@ -737,7 +737,7 @@ model ClientApiConfig {
   id              String           @id @default(cuid())
   ownerAccountId  String?
   domain          String           @unique
-  apiUrl          String
+  apiUrl          String?
   apiKey          String?
   apiSchema       Json?
   verificationEmail String?
