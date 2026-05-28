@@ -68,14 +68,19 @@ model User {
 }
 
 model ImporterAccount {
-  id               String            @id @default(cuid())
-  email            String            @unique
-  passwordHash     String
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
-  clientApiConfigs ClientApiConfig[]
+  id                              String            @id @default(cuid())
+  email                           String            @unique
+  passwordHash                    String
+  emailVerificationTokenHash      String?
+  emailVerificationTokenExpiresAt DateTime?
+  emailVerificationSentAt         DateTime?
+  emailVerifiedAt                 DateTime?
+  createdAt                       DateTime          @default(now())
+  updatedAt                       DateTime          @updatedAt
+  clientApiConfigs                ClientApiConfig[]
 
   @@index([email])
+  @@index([emailVerificationTokenHash])
 }
 
 model Company {
@@ -755,21 +760,66 @@ model ClientApiConfig {
   pendingVerificationTokenHash String?
   pendingVerificationTokenExpiresAt DateTime?
   pendingVerificationSentAt DateTime?
+  stripeCustomerId String?         @unique
+  stripeTransferPriceId String?
+  billingStatus  String            @default("not_configured")
+  billingName    String?
+  billingEmail   String?
+  billingAddressLine1 String?
+  billingAddressLine2 String?
+  billingAddressCity String?
+  billingAddressState String?
+  billingAddressPostalCode String?
+  billingAddressCountry String?
+  billingTimezone String?
+  billingSetupCompletedAt DateTime?
+  firstBillableTransferAt DateTime?
+  nextBillingAt DateTime?
+  billingBlockedAt DateTime?
+  billingOverrideUntil DateTime?
+  billingOverrideReason String?
+  latestStripeInvoiceId String?
+  latestStripeInvoiceStatus String?
+  latestInvoiceHostedUrl String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   ownerAccount    ImporterAccount? @relation(fields: [ownerAccountId], references: [id])
   allowedEmails   ClientAllowedEmail[]
   apiKeys         ClientApiKey[]
+  endpoints       ClientApiEndpoint[]
   webhookSecrets  ClientWebhookSecret[]
   transferScripts TransferScript[]
+  domainTransfers DomainTransfer[]
+  billingInvoices DomainBillingInvoice[]
 
   @@index([ownerAccountId])
   @@index([domain])
+  @@index([billingStatus])
+  @@index([nextBillingAt])
+}
+
+model ClientApiEndpoint {
+  id                String          @id @default(cuid())
+  clientApiConfigId String
+  clientDomain      String
+  name              String
+  apiUrl            String
+  apiSchema         Json?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  clientApiConfig   ClientApiConfig @relation(fields: [clientApiConfigId], references: [id], onDelete: Cascade)
+  allowedEmails     ClientAllowedEmail[]
+  webhookSecrets    ClientWebhookSecret[]
+  domainTransfers   DomainTransfer[]
+
+  @@index([clientApiConfigId])
+  @@index([clientDomain])
 }
 
 model ClientWebhookSecret {
   id                String          @id @default(cuid())
   clientApiConfigId String
+  clientApiEndpointId String?
   clientDomain      String
   secret            String
   secretHash        String          @unique
@@ -778,8 +828,10 @@ model ClientWebhookSecret {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   clientApiConfig   ClientApiConfig @relation(fields: [clientApiConfigId], references: [id], onDelete: Cascade)
+  clientApiEndpoint ClientApiEndpoint? @relation(fields: [clientApiEndpointId], references: [id], onDelete: Cascade)
 
   @@index([clientApiConfigId])
+  @@index([clientApiEndpointId])
   @@index([clientDomain])
   @@index([deletedAt])
 }
@@ -807,15 +859,18 @@ model ClientApiKey {
 model ClientAllowedEmail {
   id                String           @id @default(cuid())
   clientApiConfigId String?
+  clientApiEndpointId String?
   clientDomain      String
   email             String
   label             String?
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   clientApiConfig   ClientApiConfig? @relation(fields: [clientApiConfigId], references: [id])
+  clientApiEndpoint ClientApiEndpoint? @relation(fields: [clientApiEndpointId], references: [id])
 
-  @@unique([clientDomain, email])
+  @@unique([clientDomain, email, clientApiEndpointId])
   @@index([clientApiConfigId])
+  @@index([clientApiEndpointId])
   @@index([clientDomain])
   @@index([email])
 }
@@ -861,4 +916,68 @@ model WebExtensionExport {
   @@index([userEmail])
   @@index([siteOrigin])
   @@index([runId])
+}
+
+model DomainBillingInvoice {
+  id                String          @id @default(cuid())
+  clientApiConfigId String
+  clientDomain      String
+  stripeInvoiceId   String?         @unique
+  stripeInvoiceItemId String?
+  stripePriceId     String?
+  transferCount     Int             @default(0)
+  amountDueCents    Int?
+  currency          String          @default("usd")
+  billingPeriodStart DateTime
+  billingPeriodEnd   DateTime
+  status            String          @default("draft")
+  hostedInvoiceUrl  String?
+  invoicePdfUrl     String?
+  billedAt          DateTime?
+  paidAt            DateTime?
+  failedAt          DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  clientApiConfig   ClientApiConfig @relation(fields: [clientApiConfigId], references: [id], onDelete: Cascade)
+  transfers         DomainTransfer[]
+
+  @@index([clientApiConfigId])
+  @@index([clientDomain])
+  @@index([status])
+  @@index([billedAt])
+}
+
+model DomainTransfer {
+  id                String                @id @default(cuid())
+  clientApiConfigId String
+  clientApiEndpointId String?
+  clientDomain      String
+  sourceDomain      String
+  clientEmail       String
+  exportId          String?
+  runId             String?
+  transferredCount  Int                   @default(0)
+  status            String
+  destinationStatus Int?
+  errorMessage      String?
+  billable          Boolean               @default(false)
+  domainBillingInvoiceId String?
+  stripeInvoiceId   String?
+  stripeInvoiceItemId String?
+  billedAt          DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  clientApiConfig   ClientApiConfig       @relation(fields: [clientApiConfigId], references: [id], onDelete: Cascade)
+  clientApiEndpoint ClientApiEndpoint?    @relation(fields: [clientApiEndpointId], references: [id], onDelete: SetNull)
+  billingInvoice    DomainBillingInvoice? @relation(fields: [domainBillingInvoiceId], references: [id], onDelete: SetNull)
+
+  @@index([clientApiConfigId])
+  @@index([clientApiEndpointId])
+  @@index([clientDomain])
+  @@index([clientEmail])
+  @@index([sourceDomain])
+  @@index([status])
+  @@index([billable])
+  @@index([stripeInvoiceId])
+  @@index([createdAt])
 }
