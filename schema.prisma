@@ -922,6 +922,22 @@ model WebExtensionExport {
   @@index([runId])
 }
 
+model ReviewTransferCapture {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  payload           Json
+  destinationDomain String?
+  sourceDomain      String?
+  clientEmail       String?
+  exportId          String?
+  runId             String?
+  transferredCount  Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([slug])
+}
+
 model DomainBillingInvoice {
   id                String          @id @default(cuid())
   clientApiConfigId String
