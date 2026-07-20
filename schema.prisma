@@ -14,108 +14,112 @@ datasource db {
 }
 
 model User {
-  id                     String         @id @default(cuid())
-  email                  String         @unique
-  passwordHash           String
-  name                   String?
-  defaultCompanyId       String?
-  defaultCompany         Company?       @relation("DefaultCompany", fields: [defaultCompanyId], references: [id])
-  customChecklist        Json?
-  weeklyGoals            Json?
-  freeQuotesUsed         Int            @default(0)
-  freeVisualizationsUsed Int            @default(0)
-  subscriptionStatus     String         @default("inactive")
-  subscriptionId         String?
-  onboardingTourStatus   OnboardingTourStatus? @default(not_started)
-  onboardingTourStep     Int?
-  onboardingTourStartedAt DateTime?
-  onboardingTourCompletedAt DateTime?
-  onboardingTrialPromptedAt DateTime?
-  onboardingTrialDeclinedAt DateTime?
-  onboardingDemoAccessUntil DateTime?
-  lastLogin              DateTime?
-  emailVerifiedAt        DateTime?
-  emailVerificationCodeHash String?
+  id                         String                    @id @default(cuid())
+  email                      String                    @unique
+  passwordHash               String
+  name                       String?
+  defaultCompanyId           String?
+  defaultCompany             Company?                  @relation("DefaultCompany", fields: [defaultCompanyId], references: [id])
+  customChecklist            Json?
+  weeklyGoals                Json?
+  freeQuotesUsed             Int                       @default(0)
+  freeVisualizationsUsed     Int                       @default(0)
+  subscriptionStatus         String                    @default("inactive")
+  subscriptionId             String?
+  onboardingTourStatus       OnboardingTourStatus?     @default(not_started)
+  onboardingTourStep         Int?
+  onboardingTourStartedAt    DateTime?
+  onboardingTourCompletedAt  DateTime?
+  onboardingTrialPromptedAt  DateTime?
+  onboardingTrialDeclinedAt  DateTime?
+  onboardingDemoAccessUntil  DateTime?
+  lastLogin                  DateTime?
+  sessionVersion             Int                       @default(0)
+  loginFailedAttempts        Int                       @default(0)
+  loginBlockedUntil          DateTime?
+  emailVerifiedAt            DateTime?
+  emailVerificationCodeHash  String?
   emailVerificationExpiresAt DateTime?
-  emailVerificationSentAt DateTime?
-  createdAt              DateTime       @default(now())
-  updatedAt              DateTime       @updatedAt
-  memberships            Membership[]
-  ownedCompanies         Company[]      @relation("OwnedCompanies")
-  customers              Customer[]
-  vendors                Vendor[]
-  projects               Project[]
-  quotes                 Quote[]
-  invoices               Invoice[]
-  installments           Installment[]
-  subscriptions          Subscription[]
-  aiJobs                 AiJob[]
-  usageLogs              UsageLog[]
-  sharedLinks            SharedLink[]
-  stripeIds              StripeId[]
-  budgets              Budget[]
-  budgetVersions       BudgetVersion[]
-  files                  File[]
-  webExtensionExports    WebExtensionExport[]
-  documentTemplateVersions DocumentTemplateVersion[]
-  documentsCreated         Document[]
-  documentVersionsCreated  DocumentVersion[]
-  documentEvents           DocumentEvent[]
-  documentSigningRequests  DocumentSigningRequest[]
-  documentSigners          DocumentSigner[]
-  documentShareLinks       DocumentShareLink[]
-  projectShareInvites      ProjectShareInvite[]
+  emailVerificationSentAt    DateTime?
+  emailVerificationAttempts  Int                       @default(0)
+  createdAt                  DateTime                  @default(now())
+  updatedAt                  DateTime                  @updatedAt
+  memberships                Membership[]
+  ownedCompanies             Company[]                 @relation("OwnedCompanies")
+  customers                  Customer[]
+  vendors                    Vendor[]
+  projects                   Project[]
+  quotes                     Quote[]
+  invoices                   Invoice[]
+  installments               Installment[]
+  subscriptions              Subscription[]
+  aiJobs                     AiJob[]
+  usageLogs                  UsageLog[]
+  sharedLinks                SharedLink[]
+  stripeIds                  StripeId[]
+  budgets                    Budget[]
+  budgetVersions             BudgetVersion[]
+  files                      File[]
+  webExtensionExports        WebExtensionExport[]
+  documentTemplateVersions   DocumentTemplateVersion[]
+  documentsCreated           Document[]
+  documentVersionsCreated    DocumentVersion[]
+  documentEvents             DocumentEvent[]
+  documentSigningRequests    DocumentSigningRequest[]
+  documentSigners            DocumentSigner[]
+  documentShareLinks         DocumentShareLink[]
+  projectShareInvites        ProjectShareInvite[]
 }
 
 model Company {
-  id                String             @id @default(cuid())
-  name              String
-  ownerId           String
-  owner             User               @relation("OwnedCompanies", fields: [ownerId], references: [id])
-  logoId            String?
-  address           String?
-  phone             String?
-  website           String?
-  isPersonal        Boolean?           @default(false)
-  isSystem          Boolean            @default(false) // true for admin/global team
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  defaultForUsers   User[]             @relation("DefaultCompany")
-  memberships       Membership[]
-  roles             Role[]
-  customers         Customer[]
-  vendors           Vendor[]
-  projects          Project[]
-  projectNotes      ProjectNote[]
-  quotes            Quote[]
-  quoteContents     QuoteContent[]
-  invoices          Invoice[]
-  installments      Installment[]
-  stripeIds         StripeId[]
-  aiJobs            AiJob[]
-  budgets         Budget[]
-  budgetDivisions BudgetDivision[]
-  budgetLineItems BudgetLineItem[]
-  sharedLinks       SharedLink[]
-  files             File[]
-  documentTemplates DocumentTemplate[]
-  documents         Document[]
-  documentShareLinks DocumentShareLink[]
+  id                  String               @id @default(cuid())
+  name                String
+  ownerId             String
+  owner               User                 @relation("OwnedCompanies", fields: [ownerId], references: [id])
+  logoId              String?
+  address             String?
+  phone               String?
+  website             String?
+  isPersonal          Boolean?             @default(false)
+  isSystem            Boolean              @default(false) // true for admin/global team
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  defaultForUsers     User[]               @relation("DefaultCompany")
+  memberships         Membership[]
+  roles               Role[]
+  customers           Customer[]
+  vendors             Vendor[]
+  projects            Project[]
+  projectNotes        ProjectNote[]
+  quotes              Quote[]
+  quoteContents       QuoteContent[]
+  invoices            Invoice[]
+  installments        Installment[]
+  stripeIds           StripeId[]
+  aiJobs              AiJob[]
+  budgets             Budget[]
+  budgetDivisions     BudgetDivision[]
+  budgetLineItems     BudgetLineItem[]
+  sharedLinks         SharedLink[]
+  files               File[]
+  documentTemplates   DocumentTemplate[]
+  documents           Document[]
+  documentShareLinks  DocumentShareLink[]
   projectShareInvites ProjectShareInvite[]
 }
 
 model Membership {
-  id        String         @id @default(cuid())
+  id        String           @id @default(cuid())
   userId    String?
   companyId String
   roleId    String?
   email     String?
   status    MembershipStatus @default(accepted)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  user      User?          @relation(fields: [userId], references: [id])
-  company   Company        @relation(fields: [companyId], references: [id])
-  role      Role?          @relation(fields: [roleId], references: [id])
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User?            @relation(fields: [userId], references: [id])
+  company   Company          @relation(fields: [companyId], references: [id])
+  role      Role?            @relation(fields: [roleId], references: [id])
 
   @@unique([userId, companyId])
   @@unique([companyId, email])
@@ -153,14 +157,62 @@ enum DocumentStatus {
   VOIDED
 }
 
+enum BudgetLifecycleStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum BudgetVersionKind {
+  SAVE
+  BASELINE
+  CHANGE_ORDER_APPLIED
+  INTERNAL_METADATA
+}
+
+enum ChangeOrderLineAction {
+  ADD
+  REVISE
+  REMOVE
+}
+
+enum ProcurementMethod {
+  UNCLASSIFIED
+  PURCHASE_ORDER
+  WORK_ORDER
+  INTERNAL
+  NONE
+}
+
+enum BudgetCostType {
+  UNCLASSIFIED
+  MATERIAL
+  EQUIPMENT
+  RENTAL
+  SUBCONTRACT
+  INTERNAL_LABOR
+  OTHER
+}
+
+enum PurchaseOrderLifecycleStatus {
+  DRAFT
+  APPROVED
+  ISSUED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CLOSED
+  CANCELED
+  SUPERSEDED
+}
+
 model Role {
-  id          String        @id @default(cuid())
+  id          String       @id @default(cuid())
   companyId   String
   name        String
   permissions Json
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  company     Company       @relation(fields: [companyId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  company     Company      @relation(fields: [companyId], references: [id])
   memberships Membership[]
   customers   Customer[]
   vendors     Vendor[]
@@ -180,55 +232,70 @@ model StripeId {
   user             User     @relation(fields: [userId], references: [id])
   company          Company? @relation(fields: [companyId], references: [id])
 
-  @@unique([userId])
+  @@unique([companyId])
   @@index([companyId])
+  @@index([userId])
+}
+
+model StripeWebhookEvent {
+  id          String    @id @default(cuid())
+  eventId     String    @unique
+  accountId   String?
+  eventType   String
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([accountId])
+  @@index([eventType])
 }
 
 model Customer {
-  id        String    @id @default(cuid())
-  userId    String
-  companyId String
-  roleId    String?
-  name      String
-  email     String?
-  address   String?
-  street1   String?
-  street2   String?
-  city      String?
-  state     String?
-  zipCode   String?
-  country   String?
-  phone     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      User      @relation(fields: [userId], references: [id])
-  company   Company   @relation(fields: [companyId], references: [id])
-  role      Role?     @relation(fields: [roleId], references: [id])
-  projects  Project[]
+  id          String       @id @default(cuid())
+  userId      String
+  companyId   String
+  roleId      String?
+  name        String
+  email       String?
+  address     String?
+  street1     String?
+  street2     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  country     String?
+  phone       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id])
+  company     Company      @relation(fields: [companyId], references: [id])
+  role        Role?        @relation(fields: [roleId], references: [id])
+  projects    Project[]
   sharedLinks SharedLink[]
 
   @@index([roleId], map: "Customer_roleId_idx")
 }
 
 model Vendor {
-  id        String   @id @default(cuid())
-  userId    String
-  companyId String
-  roleId    String?
-  name      String
-  email     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  company   Company  @relation(fields: [companyId], references: [id])
-  role      Role?    @relation(fields: [roleId], references: [id])
+  id                       String           @id @default(cuid())
+  userId                   String
+  companyId                String
+  roleId                   String?
+  name                     String
+  email                    String
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @updatedAt
+  user                     User             @relation(fields: [userId], references: [id])
+  company                  Company          @relation(fields: [companyId], references: [id])
+  role                     Role?            @relation(fields: [roleId], references: [id])
+  preferredBudgetLineItems BudgetLineItem[]
+  purchaseOrders           PurchaseOrder[]
 
   @@index([companyId])
   @@index([roleId])
 }
 
 model Project {
-  id             String       @id @default(cuid())
+  id             String               @id @default(cuid())
   userId         String
   companyId      String
   customerId     String
@@ -241,21 +308,21 @@ model Project {
   state          String
   zipCode        String
   country        String
-  status         String?      @default("LEAD")
+  status         String?              @default("LEAD")
   notes          String[]
   referenceFiles String[]
   siteChecklist  Json?
   aiInsights     Json?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  user           User         @relation(fields: [userId], references: [id])
-  company        Company      @relation(fields: [companyId], references: [id])
-  customer       Customer     @relation(fields: [customerId], references: [id])
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  user           User                 @relation(fields: [userId], references: [id])
+  company        Company              @relation(fields: [companyId], references: [id])
+  customer       Customer             @relation(fields: [customerId], references: [id])
   quotes         Quote[]
   sharedLinks    SharedLink[]
   shareInvites   ProjectShareInvite[]
-  budgets      Budget[]
-  documents     Document[]
+  budgets        Budget[]
+  documents      Document[]
 }
 
 model ProjectNote {
@@ -273,14 +340,14 @@ model Quote {
   userId      String
   companyId   String
   imageUrl    String?
-  budgetId  String?
+  budgetId    String?
   totalAmount Decimal?      @db.Decimal(18, 2)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   user        User          @relation(fields: [userId], references: [id])
   company     Company       @relation(fields: [companyId], references: [id])
   content     QuoteContent?
-  budget    Budget?     @relation(fields: [budgetId], references: [id])
+  budget      Budget?       @relation(fields: [budgetId], references: [id])
   invoices    Invoice[]
   project     Project?      @relation(fields: [projectId], references: [id])
   projectId   String?
@@ -394,32 +461,44 @@ model AiJob {
 }
 
 model Budget {
-  id                 String             @id @default(cuid())
+  id                 String                @id @default(cuid())
   userId             String
   companyId          String
   projectId          String?
   divisionIds        String[]
   previousResponseId String?
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  user               User               @relation(fields: [userId], references: [id])
-  company            Company            @relation(fields: [companyId], references: [id])
-  project            Project?           @relation(fields: [projectId], references: [id])
+  lifecycleStatus    BudgetLifecycleStatus @default(DRAFT)
+  baselineVersionId  String?               @unique
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  user               User                  @relation(fields: [userId], references: [id])
+  company            Company               @relation(fields: [companyId], references: [id])
+  project            Project?              @relation(fields: [projectId], references: [id])
   divisions          BudgetDivision[]
   quotes             Quote[]
-  versions           BudgetVersion[]
+  versions           BudgetVersion[]       @relation("BudgetVersions")
+  baselineVersion    BudgetVersion?        @relation("BudgetBaseline", fields: [baselineVersionId], references: [id])
+  changeOrders       ChangeOrder[]
+  purchaseOrders     PurchaseOrder[]
 }
 
 model BudgetVersion {
-  id            String   @id @default(cuid())
-  budgetId      String
-  versionNumber Int
-  createdById   String
-  totalAmount   Decimal  @db.Decimal(18, 2)
-  breakdownJson Json
-  createdAt     DateTime @default(now())
-  budget        Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
-  createdBy     User     @relation(fields: [createdById], references: [id])
+  id                 String            @id @default(cuid())
+  budgetId           String
+  versionNumber      Int
+  createdById        String
+  totalAmount        Decimal           @db.Decimal(18, 2)
+  breakdownJson      Json
+  kind               BudgetVersionKind @default(SAVE)
+  sourceDocumentId   String?           @unique
+  note               String?
+  createdAt          DateTime          @default(now())
+  budget             Budget            @relation("BudgetVersions", fields: [budgetId], references: [id], onDelete: Cascade)
+  baselineFor        Budget?           @relation("BudgetBaseline")
+  createdBy          User              @relation(fields: [createdById], references: [id])
+  sourceDocument     Document?         @relation("BudgetVersionSourceDocument", fields: [sourceDocumentId], references: [id], onDelete: SetNull)
+  sourceChangeOrders ChangeOrder[]     @relation("ChangeOrderSourceVersion")
+  appliedChangeOrder ChangeOrder?      @relation("ChangeOrderAppliedVersion")
 
   @@unique([budgetId, versionNumber])
   @@index([budgetId])
@@ -427,97 +506,121 @@ model BudgetVersion {
 }
 
 model BudgetDivision {
-  id           String                     @id @default(cuid())
-  budgetId   String?
-  companyId    String
-  divisionName String
-  followUps    Json?
-  createdAt    DateTime                   @default(now())
-  updatedAt    DateTime                   @updatedAt
-  budget     Budget?                  @relation(fields: [budgetId], references: [id])
-  company      Company                    @relation(fields: [companyId], references: [id])
-  lineItems    BudgetDivisionLineItem[]
+  id                       String                   @id @default(cuid())
+  budgetId                 String?
+  companyId                String
+  divisionName             String
+  followUps                Json?
+  archivedAt               DateTime?
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  budget                   Budget?                  @relation(fields: [budgetId], references: [id])
+  company                  Company                  @relation(fields: [companyId], references: [id])
+  lineItems                BudgetDivisionLineItem[]
+  sourceChangeOrderLines   ChangeOrderLine[]        @relation("ChangeOrderSourceDivision")
+  appliedChangeOrderLines  ChangeOrderLine[]        @relation("ChangeOrderAppliedDivision")
+  sourcePurchaseOrderLines PurchaseOrderLine[]      @relation("PurchaseOrderSourceDivision")
+
+  @@index([budgetId, archivedAt])
 }
 
 model BudgetLineItem {
-  id            String                     @id @default(cuid())
-  name          String
-  csiDivision   String?
-  csiSection    String?
-  csiSubsection String?
-  companyId     String
-  productUrl    String?
-  followUps     Json?
-  price         Decimal                    @default(0) @db.Decimal(18, 4)
-  markupPercent Decimal                    @default(0) @db.Decimal(8, 4)
-  addTax        Boolean                    @default(false)
-  taxPercent    Decimal                    @default(0) @db.Decimal(8, 4)
-  units         String
-  quantity      Decimal                    @default(0) @db.Decimal(18, 4)
-  createdAt     DateTime                   @default(now())
-  updatedAt     DateTime                   @updatedAt
-  company       Company                    @relation(fields: [companyId], references: [id])
-  divisions     BudgetDivisionLineItem[]
+  id                       String                   @id @default(cuid())
+  name                     String
+  csiDivision              String?
+  csiSection               String?
+  csiSubsection            String?
+  companyId                String
+  productUrl               String?
+  followUps                Json?
+  price                    Decimal                  @default(0) @db.Decimal(18, 4)
+  markupPercent            Decimal                  @default(0) @db.Decimal(8, 4)
+  addTax                   Boolean                  @default(false)
+  taxPercent               Decimal                  @default(0) @db.Decimal(8, 4)
+  units                    String
+  quantity                 Decimal                  @default(0) @db.Decimal(18, 4)
+  sku                      String?
+  costType                 BudgetCostType           @default(UNCLASSIFIED)
+  procurementMethod        ProcurementMethod        @default(UNCLASSIFIED)
+  preferredVendorId        String?
+  archivedAt               DateTime?
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  company                  Company                  @relation(fields: [companyId], references: [id])
+  preferredVendor          Vendor?                  @relation(fields: [preferredVendorId], references: [id], onDelete: SetNull)
+  divisions                BudgetDivisionLineItem[]
+  sourceChangeOrderLines   ChangeOrderLine[]        @relation("ChangeOrderSourceLine")
+  appliedChangeOrderLines  ChangeOrderLine[]        @relation("ChangeOrderAppliedLine")
+  sourcePurchaseOrderLines PurchaseOrderLine[]      @relation("PurchaseOrderSourceLine")
+
+  @@index([companyId, archivedAt])
+  @@index([preferredVendorId])
 }
 
 model BudgetDivisionLineItem {
-  id                 String           @id @default(cuid())
+  id               String         @id @default(cuid())
   budgetDivisionId String
-  lineItemId         String
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-  division           BudgetDivision @relation(fields: [budgetDivisionId], references: [id])
-  lineItem           BudgetLineItem @relation(fields: [lineItemId], references: [id])
+  lineItemId       String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  division         BudgetDivision @relation(fields: [budgetDivisionId], references: [id])
+  lineItem         BudgetLineItem @relation(fields: [lineItemId], references: [id])
 
   @@unique([budgetDivisionId, lineItemId])
 }
 
 model SharedLink {
-  id               String   @id @default(cuid())
-  userId           String
-  companyId        String
-  projectId        String?
-  customerId       String?
-  budgetIds      String[]
-  divisionIds      String[]
-  lineItemIds      String[]
-  sharedData       Json?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id])
-  company          Company  @relation(fields: [companyId], references: [id])
-  project          Project? @relation(fields: [projectId], references: [id])
-  customer         Customer? @relation(fields: [customerId], references: [id])
+  id                        String    @id @default(cuid())
+  userId                    String
+  companyId                 String
+  projectId                 String?
+  customerId                String?
+  budgetIds                 String[]
+  divisionIds               String[]
+  lineItemIds               String[]
+  sharedData                Json?
+  verificationCodeHash      String?
+  verificationCodeExpiresAt DateTime?
+  verificationCodeSentAt    DateTime?
+  verificationAttempts      Int       @default(0)
+  verifiedAt                DateTime?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  user                      User      @relation(fields: [userId], references: [id])
+  company                   Company   @relation(fields: [companyId], references: [id])
+  project                   Project?  @relation(fields: [projectId], references: [id])
+  customer                  Customer? @relation(fields: [customerId], references: [id])
 
   @@index([customerId], map: "SharedLink_customerId_idx")
 }
 
 model ProjectShareInvite {
-  id                       String   @id @default(cuid())
-  projectId                String
-  companyId                String
-  createdById              String
-  recipientType            String
-  recipientId              String?
-  recipientName            String?
-  recipientEmail           String
-  enabled                  Boolean  @default(true)
-  canViewBudget            Boolean  @default(false)
-  limitToLineItems         Boolean  @default(true)
-  canViewTotals            Boolean  @default(false)
-  canViewQuantities        Boolean  @default(false)
-  budgetIds                String[]
-  divisionIds              String[]
-  lineItemIds              String[]
-  verificationCodeHash     String?
+  id                        String    @id @default(cuid())
+  projectId                 String
+  companyId                 String
+  createdById               String
+  recipientType             String
+  recipientId               String?
+  recipientName             String?
+  recipientEmail            String
+  enabled                   Boolean   @default(true)
+  canViewBudget             Boolean   @default(false)
+  limitToLineItems          Boolean   @default(true)
+  canViewTotals             Boolean   @default(false)
+  canViewQuantities         Boolean   @default(false)
+  budgetIds                 String[]
+  divisionIds               String[]
+  lineItemIds               String[]
+  verificationCodeHash      String?
   verificationCodeExpiresAt DateTime?
-  verificationSentAt       DateTime?
-  verifiedAt               DateTime?
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-  project                  Project  @relation(fields: [projectId], references: [id])
-  company                  Company  @relation(fields: [companyId], references: [id])
-  createdBy                User     @relation(fields: [createdById], references: [id])
+  verificationSentAt        DateTime?
+  verificationAttempts      Int       @default(0)
+  verifiedAt                DateTime?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  project                   Project   @relation(fields: [projectId], references: [id])
+  company                   Company   @relation(fields: [companyId], references: [id])
+  createdBy                 User      @relation(fields: [createdById], references: [id])
 
   @@index([projectId])
   @@index([companyId])
@@ -525,50 +628,50 @@ model ProjectShareInvite {
 }
 
 model File {
-  id           String   @id @default(cuid())
-  companyId    String?
-  uploaderId   String?
-  bucket       String?
-  originalName String
-  mimeType     String?
-  sizeBytes    Int?
-  path         String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  company      Company? @relation(fields: [companyId], references: [id])
-  uploader     User?    @relation(fields: [uploaderId], references: [id])
-  documentVersionPdfs DocumentVersion[] @relation("DocumentVersionPdfFile")
+  id                  String               @id @default(cuid())
+  companyId           String?
+  uploaderId          String?
+  bucket              String?
+  originalName        String
+  mimeType            String?
+  sizeBytes           Int?
+  path                String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  company             Company?             @relation(fields: [companyId], references: [id])
+  uploader            User?                @relation(fields: [uploaderId], references: [id])
+  documentVersionPdfs DocumentVersion[]    @relation("DocumentVersionPdfFile")
   documentAttachments DocumentAttachment[]
 }
 
 model DocumentTemplate {
-  id        String       @id @default(cuid())
-  companyId String
-  type      DocumentType
-  name      String
-  status    String       @default("ACTIVE")
-  isDefault Boolean      @default(false)
+  id                 String                    @id @default(cuid())
+  companyId          String
+  type               DocumentType
+  name               String
+  status             String                    @default("ACTIVE")
+  isDefault          Boolean                   @default(false)
   boldsignTemplateId String?
-  signerRoles Json?
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  company   Company      @relation(fields: [companyId], references: [id])
-  versions  DocumentTemplateVersion[]
+  signerRoles        Json?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  company            Company                   @relation(fields: [companyId], references: [id])
+  versions           DocumentTemplateVersion[]
 
   @@index([companyId])
   @@index([type])
 }
 
 model DocumentTemplateVersion {
-  id            String   @id @default(cuid())
-  templateId    String
-  versionNumber Int
-  bodyHtml      String
-  schemaJson    Json?
-  createdById   String
-  createdAt     DateTime @default(now())
-  template      DocumentTemplate @relation(fields: [templateId], references: [id])
-  createdBy     User     @relation(fields: [createdById], references: [id])
+  id               String            @id @default(cuid())
+  templateId       String
+  versionNumber    Int
+  bodyHtml         String
+  schemaJson       Json?
+  createdById      String
+  createdAt        DateTime          @default(now())
+  template         DocumentTemplate  @relation(fields: [templateId], references: [id])
+  createdBy        User              @relation(fields: [createdById], references: [id])
   documentVersions DocumentVersion[]
 
   @@unique([templateId, versionNumber])
@@ -577,40 +680,49 @@ model DocumentTemplateVersion {
 }
 
 model Document {
-  id               String         @id @default(cuid())
-  companyId         String
-  projectId         String
-  type             DocumentType
-  number           String?
-  status           DocumentStatus @default(DRAFT)
-  signingRequired  Boolean        @default(false)
-  boldsignTemplateId String?
-  signerRoles      Json?
-  signingFields    Json?
-  currentVersionId String?        @unique
-  counterpartyType String?
-  counterpartyId   String?
-  totalAmount      Decimal?       @db.Decimal(18, 2)
-  createdById      String
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  company          Company        @relation(fields: [companyId], references: [id])
-  project          Project        @relation(fields: [projectId], references: [id])
-  createdBy        User           @relation(fields: [createdById], references: [id])
-  currentVersion   DocumentVersion? @relation("DocumentCurrentVersion", fields: [currentVersionId], references: [id])
-  versions         DocumentVersion[] @relation("DocumentVersions")
-  attachments      DocumentAttachment[]
-  events           DocumentEvent[]
-  signingRequests  DocumentSigningRequest[]
-  signers          DocumentSigner[]
-  shareLinks       DocumentShareLink[]
+  id                     String                   @id @default(cuid())
+  companyId              String
+  projectId              String
+  type                   DocumentType
+  number                 String?
+  status                 DocumentStatus           @default(DRAFT)
+  signingRequired        Boolean                  @default(false)
+  boldsignTemplateId     String?
+  signerRoles            Json?
+  signingFields          Json?
+  currentVersionId       String?                  @unique
+  counterpartyType       String?
+  counterpartyId         String?
+  totalAmount            Decimal?                 @db.Decimal(18, 2)
+  revisionOfDocumentId   String?
+  creationIdempotencyKey String?
+  createdById            String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  company                Company                  @relation(fields: [companyId], references: [id])
+  project                Project                  @relation(fields: [projectId], references: [id])
+  createdBy              User                     @relation(fields: [createdById], references: [id])
+  currentVersion         DocumentVersion?         @relation("DocumentCurrentVersion", fields: [currentVersionId], references: [id])
+  versions               DocumentVersion[]        @relation("DocumentVersions")
+  attachments            DocumentAttachment[]
+  events                 DocumentEvent[]
+  signingRequests        DocumentSigningRequest[]
+  signers                DocumentSigner[]
+  shareLinks             DocumentShareLink[]
+  revisionOf             Document?                @relation("DocumentRevisions", fields: [revisionOfDocumentId], references: [id], onDelete: SetNull)
+  revisions              Document[]               @relation("DocumentRevisions")
+  changeOrder            ChangeOrder?
+  purchaseOrder          PurchaseOrder?
+  sourceBudgetVersions   BudgetVersion[]          @relation("BudgetVersionSourceDocument")
 
+  @@unique([companyId, creationIdempotencyKey])
   @@index([companyId, projectId])
   @@index([status])
+  @@index([revisionOfDocumentId])
 }
 
 model DocumentVersion {
-  id                String   @id @default(cuid())
+  id                String                   @id @default(cuid())
   documentId        String
   versionNumber     Int
   templateVersionId String?
@@ -618,12 +730,12 @@ model DocumentVersion {
   dataSnapshotJson  Json?
   pdfFileId         String?
   createdById       String
-  createdAt         DateTime @default(now())
-  document          Document @relation("DocumentVersions", fields: [documentId], references: [id])
-  currentFor       Document? @relation("DocumentCurrentVersion")
+  createdAt         DateTime                 @default(now())
+  document          Document                 @relation("DocumentVersions", fields: [documentId], references: [id])
+  currentFor        Document?                @relation("DocumentCurrentVersion")
   templateVersion   DocumentTemplateVersion? @relation(fields: [templateVersionId], references: [id])
-  pdfFile           File?    @relation("DocumentVersionPdfFile", fields: [pdfFileId], references: [id])
-  createdBy         User     @relation(fields: [createdById], references: [id])
+  pdfFile           File?                    @relation("DocumentVersionPdfFile", fields: [pdfFileId], references: [id])
+  createdBy         User                     @relation(fields: [createdById], references: [id])
   attachments       DocumentAttachment[]
 
   @@unique([documentId, versionNumber])
@@ -633,15 +745,15 @@ model DocumentVersion {
 }
 
 model DocumentAttachment {
-  id               String   @id @default(cuid())
-  documentId       String
+  id                String           @id @default(cuid())
+  documentId        String
   documentVersionId String?
-  fileId           String
-  label            String?
-  createdAt        DateTime @default(now())
-  document         Document @relation(fields: [documentId], references: [id])
-  documentVersion  DocumentVersion? @relation(fields: [documentVersionId], references: [id])
-  file             File     @relation(fields: [fileId], references: [id])
+  fileId            String
+  label             String?
+  createdAt         DateTime         @default(now())
+  document          Document         @relation(fields: [documentId], references: [id])
+  documentVersion   DocumentVersion? @relation(fields: [documentVersionId], references: [id])
+  file              File             @relation(fields: [fileId], references: [id])
 
   @@index([documentId])
   @@index([documentVersionId])
@@ -649,32 +761,32 @@ model DocumentAttachment {
 }
 
 model DocumentEvent {
-  id          String   @id @default(cuid())
-  documentId  String
-  eventType   String
-  actorUserId String?
+  id           String   @id @default(cuid())
+  documentId   String
+  eventType    String
+  actorUserId  String?
   metadataJson Json?
-  createdAt   DateTime @default(now())
-  document    Document @relation(fields: [documentId], references: [id])
-  actorUser   User?    @relation(fields: [actorUserId], references: [id])
+  createdAt    DateTime @default(now())
+  document     Document @relation(fields: [documentId], references: [id])
+  actorUser    User?    @relation(fields: [actorUserId], references: [id])
 
   @@index([documentId])
   @@index([actorUserId])
 }
 
 model DocumentSigningRequest {
-  id                String   @id @default(cuid())
-  documentId        String
-  templateId        String?
+  id                 String           @id @default(cuid())
+  documentId         String
+  templateId         String?
   boldsignTemplateId String?
   boldsignDocumentId String
-  status            String   @default("pending")
-  createdById       String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  document          Document @relation(fields: [documentId], references: [id])
-  createdBy         User     @relation(fields: [createdById], references: [id])
-  signers           DocumentSigner[]
+  status             String           @default("pending")
+  createdById        String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  document           Document         @relation(fields: [documentId], references: [id])
+  createdBy          User             @relation(fields: [createdById], references: [id])
+  signers            DocumentSigner[]
 
   @@index([documentId])
   @@index([boldsignDocumentId])
@@ -682,22 +794,22 @@ model DocumentSigningRequest {
 }
 
 model DocumentSigner {
-  id                String   @id @default(cuid())
-  signingRequestId  String
-  documentId        String
-  roleName          String?
-  roleIndex         Int?
-  signerName        String
-  signerEmail       String
-  signerUserId      String?
-  signingOrder      Int?
-  status            String   @default("pending")
-  signedAt          DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  signingRequest    DocumentSigningRequest @relation(fields: [signingRequestId], references: [id])
-  document          Document @relation(fields: [documentId], references: [id])
-  signerUser        User?    @relation(fields: [signerUserId], references: [id])
+  id               String                 @id @default(cuid())
+  signingRequestId String
+  documentId       String
+  roleName         String?
+  roleIndex        Int?
+  signerName       String
+  signerEmail      String
+  signerUserId     String?
+  signingOrder     Int?
+  status           String                 @default("pending")
+  signedAt         DateTime?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  signingRequest   DocumentSigningRequest @relation(fields: [signingRequestId], references: [id])
+  document         Document               @relation(fields: [documentId], references: [id])
+  signerUser       User?                  @relation(fields: [signerUserId], references: [id])
 
   @@index([signingRequestId])
   @@index([documentId])
@@ -706,40 +818,167 @@ model DocumentSigner {
 }
 
 model DocumentShareLink {
-  id          String   @id @default(cuid())
-  documentId  String
-  companyId   String
-  createdById String
-  recipients  Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  document    Document @relation(fields: [documentId], references: [id])
-  company     Company  @relation(fields: [companyId], references: [id])
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  id                        String    @id @default(cuid())
+  documentId                String
+  companyId                 String
+  createdById               String
+  recipients                Json
+  verificationCodeHash      String?
+  verificationCodeExpiresAt DateTime?
+  verificationCodeSentAt    DateTime?
+  verificationAttempts      Int       @default(0)
+  verifiedAt                DateTime?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+  document                  Document  @relation(fields: [documentId], references: [id])
+  company                   Company   @relation(fields: [companyId], references: [id])
+  createdBy                 User      @relation(fields: [createdById], references: [id])
 
   @@index([documentId])
   @@index([companyId])
   @@index([createdById])
 }
 
+model ChangeOrder {
+  id                     String            @id @default(cuid())
+  documentId             String            @unique
+  budgetId               String?
+  sourceBudgetVersionId  String?
+  appliedBudgetVersionId String?           @unique
+  reason                 String?
+  description            String?
+  scheduleImpact         String?
+  customTextValuesJson   Json?
+  appliedAt              DateTime?
+  legacyImportedAt       DateTime?
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+  document               Document          @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  budget                 Budget?           @relation(fields: [budgetId], references: [id], onDelete: SetNull)
+  sourceBudgetVersion    BudgetVersion?    @relation("ChangeOrderSourceVersion", fields: [sourceBudgetVersionId], references: [id], onDelete: SetNull)
+  appliedBudgetVersion   BudgetVersion?    @relation("ChangeOrderAppliedVersion", fields: [appliedBudgetVersionId], references: [id], onDelete: SetNull)
+  lines                  ChangeOrderLine[]
+
+  @@index([budgetId])
+  @@index([sourceBudgetVersionId])
+  @@index([appliedAt])
+}
+
+model ChangeOrderLine {
+  id                      String                @id @default(cuid())
+  changeOrderId           String
+  action                  ChangeOrderLineAction
+  sourceBudgetDivisionId  String?
+  sourceBudgetLineItemId  String?
+  appliedBudgetDivisionId String?
+  appliedBudgetLineItemId String?
+  originalDivisionName    String?
+  divisionName            String
+  originalItemName        String?
+  itemName                String
+  description             String?
+  sku                     String?
+  originalUnit            String?
+  unit                    String
+  originalQuantity        Decimal               @default(0) @db.Decimal(18, 4)
+  proposedQuantity        Decimal               @default(0) @db.Decimal(18, 4)
+  originalUnitCost        Decimal               @default(0) @db.Decimal(18, 4)
+  proposedUnitCost        Decimal               @default(0) @db.Decimal(18, 4)
+  originalMarkupPercent   Decimal               @default(0) @db.Decimal(8, 4)
+  proposedMarkupPercent   Decimal               @default(0) @db.Decimal(8, 4)
+  originalAddTax          Boolean               @default(false)
+  proposedAddTax          Boolean               @default(false)
+  originalTaxPercent      Decimal               @default(0) @db.Decimal(8, 4)
+  proposedTaxPercent      Decimal               @default(0) @db.Decimal(8, 4)
+  costDelta               Decimal               @default(0) @db.Decimal(18, 2)
+  customerPriceDelta      Decimal               @default(0) @db.Decimal(18, 2)
+  sortOrder               Int                   @default(0)
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  changeOrder             ChangeOrder           @relation(fields: [changeOrderId], references: [id], onDelete: Cascade)
+  sourceBudgetDivision    BudgetDivision?       @relation("ChangeOrderSourceDivision", fields: [sourceBudgetDivisionId], references: [id], onDelete: SetNull)
+  sourceBudgetLineItem    BudgetLineItem?       @relation("ChangeOrderSourceLine", fields: [sourceBudgetLineItemId], references: [id], onDelete: SetNull)
+  appliedBudgetDivision   BudgetDivision?       @relation("ChangeOrderAppliedDivision", fields: [appliedBudgetDivisionId], references: [id], onDelete: SetNull)
+  appliedBudgetLineItem   BudgetLineItem?       @relation("ChangeOrderAppliedLine", fields: [appliedBudgetLineItemId], references: [id], onDelete: SetNull)
+
+  @@index([changeOrderId, sortOrder])
+  @@index([sourceBudgetLineItemId])
+  @@index([appliedBudgetLineItemId])
+}
+
+model PurchaseOrder {
+  id                    String                       @id @default(cuid())
+  documentId            String                       @unique
+  budgetId              String?
+  vendorId              String?
+  lifecycleStatus       PurchaseOrderLifecycleStatus @default(DRAFT)
+  shipToAddressJson     Json?
+  requestedDeliveryDate DateTime?
+  instructions          String?
+  customTextValuesJson  Json?
+  allowOverOrder        Boolean                      @default(false)
+  approvedAt            DateTime?
+  issuedAt              DateTime?
+  closedAt              DateTime?
+  canceledAt            DateTime?
+  legacyImportedAt      DateTime?
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
+  document              Document                     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  budget                Budget?                      @relation(fields: [budgetId], references: [id], onDelete: SetNull)
+  vendor                Vendor?                      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  lines                 PurchaseOrderLine[]
+
+  @@index([budgetId])
+  @@index([vendorId, lifecycleStatus])
+}
+
+model PurchaseOrderLine {
+  id                     String          @id @default(cuid())
+  purchaseOrderId        String
+  sourceBudgetDivisionId String?
+  sourceBudgetLineItemId String?
+  divisionName           String
+  itemName               String
+  description            String?
+  sku                    String?
+  orderedQuantity        Decimal         @default(0) @db.Decimal(18, 4)
+  receivedQuantity       Decimal         @default(0) @db.Decimal(18, 4)
+  unit                   String
+  vendorUnitCost         Decimal         @default(0) @db.Decimal(18, 4)
+  taxRate                Decimal         @default(0) @db.Decimal(8, 4)
+  lineSubtotal           Decimal         @default(0) @db.Decimal(18, 2)
+  lineTax                Decimal         @default(0) @db.Decimal(18, 2)
+  lineTotal              Decimal         @default(0) @db.Decimal(18, 2)
+  sortOrder              Int             @default(0)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  purchaseOrder          PurchaseOrder   @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  sourceBudgetDivision   BudgetDivision? @relation("PurchaseOrderSourceDivision", fields: [sourceBudgetDivisionId], references: [id], onDelete: SetNull)
+  sourceBudgetLineItem   BudgetLineItem? @relation("PurchaseOrderSourceLine", fields: [sourceBudgetLineItemId], references: [id], onDelete: SetNull)
+
+  @@index([purchaseOrderId, sortOrder])
+  @@index([sourceBudgetLineItemId])
+}
+
 model WebExtensionExport {
-  id         String   @id @default(cuid())
-  userId     String?
-  userEmail  String
-  siteOrigin String
-  runId      String
-  url        String
-  startedAt  DateTime
-  endedAt    DateTime?
-  pagesSeen  Int
-  groupCount Int
-  recordCount Int
-  schemaVersion Int @default(1)
-  pageType    String?
-  capture    Json
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User?    @relation(fields: [userId], references: [id])
+  id            String    @id @default(cuid())
+  userId        String?
+  userEmail     String
+  siteOrigin    String
+  runId         String
+  url           String
+  startedAt     DateTime
+  endedAt       DateTime?
+  pagesSeen     Int
+  groupCount    Int
+  recordCount   Int
+  schemaVersion Int       @default(1)
+  pageType      String?
+  capture       Json
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User?     @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([userEmail])
