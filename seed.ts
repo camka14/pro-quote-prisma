@@ -218,7 +218,7 @@ const ensureAdminCompany = async (): Promise<string> => {
 };
 
 const seedAdminUser = async (adminCompanyId: string) => {
-  const email = process.env.ADMIN_SEED_EMAIL;
+  const email = process.env.ADMIN_SEED_EMAIL?.trim().toLowerCase();
   const password = process.env.ADMIN_SEED_PASSWORD;
   const name = process.env.ADMIN_SEED_NAME || "Admin";
 
@@ -233,12 +233,21 @@ const seedAdminUser = async (adminCompanyId: string) => {
 
   const user = await prisma.user.upsert({
     where: { email },
-    update: {},
+    update: {
+      name,
+      passwordHash,
+      emailVerifiedAt: new Date(),
+      emailVerificationCodeHash: null,
+      emailVerificationExpiresAt: null,
+      emailVerificationSentAt: null,
+      emailVerificationAttempts: 0,
+    },
     create: {
       email,
       name,
       passwordHash,
       defaultCompanyId: adminCompanyId,
+      emailVerifiedAt: new Date(),
     },
   });
 

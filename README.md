@@ -1,6 +1,6 @@
-# Pro Quote Prisma Schema
+# Brixivo Prisma Schema
 
-This folder contains the shared Prisma schema and migrations for Pro Quote.
+This folder contains the shared Prisma schema and migrations for Brixivo.
 
 ## Contents
 

@@ -33,6 +33,10 @@ model User {
   onboardingTrialPromptedAt  DateTime?
   onboardingTrialDeclinedAt  DateTime?
   onboardingDemoAccessUntil  DateTime?
+  interfaceLanguage          String                    @default("en")
+  assistantReplyLanguage     String                    @default("auto")
+  workProductLanguage        String                    @default("en")
+  languagePreferencesSetAt   DateTime?
   lastLogin                  DateTime?
   sessionVersion             Int                       @default(0)
   loginFailedAttempts        Int                       @default(0)
@@ -221,16 +225,23 @@ model Role {
 }
 
 model StripeId {
-  id               String   @id @default(cuid())
-  companyId        String?
-  userId           String
-  stripeCustomerId String?
-  stripeAccountId  String?
-  lastEvent        String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  user             User     @relation(fields: [userId], references: [id])
-  company          Company? @relation(fields: [companyId], references: [id])
+  id                      String    @id @default(cuid())
+  companyId               String?
+  userId                  String
+  stripeCustomerId        String?
+  stripeAccountId         String?
+  connectDetailsSubmitted Boolean   @default(false)
+  connectChargesEnabled   Boolean   @default(false)
+  connectPayoutsEnabled   Boolean   @default(false)
+  connectDisabledReason   String?
+  connectCurrentlyDue     String[]  @default([])
+  connectPastDue          String[]  @default([])
+  connectStatusUpdatedAt  DateTime?
+  lastEvent               String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  user                    User      @relation(fields: [userId], references: [id])
+  company                 Company?  @relation(fields: [companyId], references: [id])
 
   @@unique([companyId])
   @@index([companyId])
@@ -984,4 +995,26 @@ model WebExtensionExport {
   @@index([userEmail])
   @@index([siteOrigin])
   @@index([runId])
+}
+
+model RateLimitBucket {
+  keyHash     String
+  windowStart DateTime
+  expiresAt   DateTime
+  count       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@id([keyHash, windowStart])
+  @@index([keyHash, expiresAt])
+  @@index([expiresAt])
+}
+
+model DemoTokenNonce {
+  nonce     String   @id
+  ipHash    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
 }
