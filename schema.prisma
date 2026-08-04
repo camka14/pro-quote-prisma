@@ -17,6 +17,7 @@ model User {
   id                         String                    @id @default(cuid())
   email                      String                    @unique
   passwordHash               String
+  googleSubject              String?                   @unique
   name                       String?
   defaultCompanyId           String?
   defaultCompany             Company?                  @relation("DefaultCompany", fields: [defaultCompanyId], references: [id])
