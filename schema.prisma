@@ -24,8 +24,10 @@ model User {
   weeklyGoals                Json?
   freeQuotesUsed             Int                       @default(0)
   freeVisualizationsUsed     Int                       @default(0)
-  subscriptionStatus         String                    @default("inactive")
-  subscriptionId             String?
+  subscriptionStatus           String                    @default("inactive")
+  subscriptionId               String?
+  pendingStripePromotionCodeId String?
+  pendingPromotionCode         String?
   onboardingTourStatus       OnboardingTourStatus?     @default(not_started)
   onboardingTourStep         Int?
   onboardingTourStartedAt    DateTime?
