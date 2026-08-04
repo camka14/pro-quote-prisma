@@ -432,6 +432,7 @@ model Subscription {
   userId               String
   stripeSubscriptionId String?
   status               String?
+  paymentMethodReady   Boolean   @default(false)
   currentPeriodStart   DateTime?
   currentPeriodEnd     DateTime?
   cancelAt             DateTime?
