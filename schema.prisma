@@ -31,6 +31,8 @@ model User {
   pendingPromotionCode         String?
   onboardingTourStatus       OnboardingTourStatus?     @default(not_started)
   onboardingTourStep         Int?
+  onboardingTourFlow         String?
+  onboardingTourStepId       String?
   onboardingTourStartedAt    DateTime?
   onboardingTourCompletedAt  DateTime?
   onboardingTrialPromptedAt  DateTime?
